@@ -33,13 +33,15 @@
 #include "InputManager.h"
 #include "defineUsedAction.h"
 #include "menuFunction.h"
+#include "GPSFunction.h"
+
 
 //------------ GPS vars----------------
 
 TinyGPSPlus gps;// The TinyGPS++ object
 
 SoftwareSerial ss(3, 2);//The serial connection to the GPS deviceRXPin=3;TXPin=2
-
+String GPSSentence;
 
 //----------- parametters vars------------
 byte read;
@@ -49,7 +51,7 @@ bool isNewFile=true;
 void setup()
 {
   Serial.begin(9600);
-  ss.begin(9600);
+  ss.begin(4800);
 
   lcd.begin(8, 2);
   menuSetup();
@@ -59,88 +61,87 @@ void setup()
 
 void loop()
 {
+
   read=BP_mnger.pressedButton();
   navigateMenus(read);
-  Serial.println("-----------Test---------- ");
-
   while (ss.available() > 0)
     if (gps.encode(ss.read()))
-      if (gps.location.isValid())
-  {
-    Serial.print("Location: ");
-    Serial.print(gps.location.lat(), 6);
-    Serial.print(",");
-    Serial.println(gps.location.lng(), 6);
-  }
+      if (gps.location.isUpdated() || gps.date.isUpdated() || gps.time.isUpdated() || gps.altitude.isUpdated()
+        || gps.satellites.isUpdated() || gps.hdop.isUpdated()   )
+      {
 
+        //GPSSentence=makeGPSSentence( gps);
 
-  if(getmenuUsed()!=0){
-    Serial.print("menuUsedCode: ");
-    Serial.println(getmenuUsed());
-    // deal with what has been used
+        if(getmenuUsed()!=0){
+          Serial.print("menuUsedCode: ");
+          Serial.println(getmenuUsed());
+          // deal with what has been used
 
-    switch (getmenuUsed()) {
-     case UBattery:
-       DisplayTextValues("Battery",BP_mnger.gettension(),1);
-     break;
+            switch (getmenuUsed()) {
+          case UBattery:
+            DisplayTextfloat("Bat:",BP_mnger.gettension(),1,0);
+            break;
 
-     case UStart:
-       DisplayText("Started","Filename");
-       isStarted=true;
-     break;
+          case UStart:
+            DisplayText("Started","Filename");
+            isStarted=true;
+            break;
 
-     case UStop:
-       DisplayText("Stop","Filename");
-       isStarted=true;
-     break;
+          case UStop:
+            DisplayText("Stop","Filename");
+            isStarted=true;
+            break;
 
-     case UNewFile:
-       DisplayText("UNewFile","Filename");
-       isNewFile=true;
-     break;
+          case UNewFile:
+            DisplayText("UNewFile","Filename");
+            isNewFile=true;
+            break;
 
-     case UOverWr:
-       DisplayText("UOverWr","Filename");
-       isNewFile=false;
-     break;
+          case UOverWr:
+            DisplayText("UOverWr","Filename");
+            isNewFile=false;
+            break;
 
-     case UCourt:
-       DisplayText("UCourt","Filename");
-       GPSSearchPeriod=2000;
-     break;
+          case UCourt:
+            DisplayText("UCourt","Filename");
+            GPSSearchPeriod=2000;
+            break;
 
-     case UMoyen:
-       DisplayText("UMoyen","Filename");
-       GPSSearchPeriod=15000;
-     break;
+          case UMoyen:
+            DisplayText("UMoyen","Filename");
+            GPSSearchPeriod=15000;
+            break;
 
-     case ULong:
-       DisplayText("ULong","Filename");
-       GPSSearchPeriod=60000;
-     break;
+          case ULong:
+            DisplayText("ULong","Filename");
+            GPSSearchPeriod=60000;
+            break;
 
-     case UCoord:
-       DisplayValues(gps.location.lat(),gps.location.lng(), 6);
-     break;
+          case UCoord:
+            DisplayValues(gps.location.lat(),gps.location.lng(),7 );
+            break;
 
-     case UTime:
-       DisplayText("UTime","Filename");
-     break;
+          case UTime:
 
-     case UStatus:
-       DisplayText("UStatus","Filename");
-     break;
+          DisplayTextint("D","T",gps.date.value(),gps.time.value());
 
-     case USpdAlti:
-       DisplayText("USpdAlti","Filename");
-     break;
+            break;
 
-     case UFilemnger:
-       DisplayText("UFilemnger","Filename");
-     break;
-}
+          case UStatus:
+          DisplayTextint("Sat:","HDOP",gps.satellites.value(),gps.hdop.value());
+            break;
 
-    setmenuUsed(0);
+          case UAltitude:
+          DisplayTextfloat("A:",gps.altitude.meters(),6,0);
+            break;
 
-}
+          case UFilemnger:
+            DisplayText("UFilemnger","Filename");
+            break;
+          }
+
+          setmenuUsed(0);
+
+        }
+      }
 }

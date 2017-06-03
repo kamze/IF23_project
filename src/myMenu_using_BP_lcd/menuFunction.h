@@ -27,7 +27,7 @@ MenuItem GPSData     = MenuItem(menu, "GPSData ", 1);
 MenuItem Coord       = MenuItem(menu, "Coord   ", 2);//----usable
 MenuItem Time        = MenuItem(menu, "Time    ", 2);//----usable
 MenuItem Status      = MenuItem(menu, "Status  ", 2);//----usable
-MenuItem SpdAlti     = MenuItem(menu, "SpdAlti ", 2);//----usable
+MenuItem altitude     = MenuItem(menu, "altitude ", 2);//----usable
 MenuItem Filemnger   = MenuItem(menu, "Filemngr", 1);//----usable
 
 LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
@@ -50,14 +50,25 @@ void DisplayValues(float value1,float value2, byte precision=3){
   lcd.setCursor(0, 1);
   lcd.print(value2,precision);
 }
-void DisplayTextValues(String line1,float value, byte precision=3){
+// displaying something with line & text on a specific lcd line
+void DisplayTextfloat(String text,float value, byte precision=3, byte line=0){
+  text+=String(value,precision);
   lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(line1);
-  lcd.setCursor(0, 1);
-  lcd.print(value,precision);
+  lcd.setCursor(0, line);
+  lcd.print(text);
 }
 
+void DisplayTextint(String text1,String text2,int value1,long int value2){
+
+  text1+=String(value1);
+  text2+=String(value2);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(text1);
+  lcd.setCursor(0, 1);
+  lcd.print(text2);
+}
 byte getmenuUsed() {
   return menuUsedCode;
 }
@@ -71,7 +82,7 @@ void menuSetup()
   menu.getRoot().add(Battery);
   Battery.addRight(Iteneraire).addRight(GPSData ).addRight(Filemnger);
   Iteneraire.add(Start).addRight(Stop).addRight(FileOpn).addRight(PtOpn);
-  GPSData.add(Coord).addRight(Time).addRight(Status).addRight(SpdAlti);
+  GPSData.add(Coord).addRight(Time).addRight(Status).addRight(altitude);
   FileOpn.add(NewFile).addRight(OverWr);
   PtOpn.add(Seconde_1).addRight(Secondes_15).addRight(Minute_1);
 }
@@ -134,9 +145,9 @@ void menuUseEvent(MenuUseEvent used)
     //Serial.println(used.item.getName());
     menuUsedCode=UStatus;
   }
-  else if (used.item.isEqual(SpdAlti)) {
+  else if (used.item.isEqual(altitude)) {
     //Serial.println(used.item.getName());
-    menuUsedCode=USpdAlti;
+    menuUsedCode=UAltitude;
   }
   // ------File manger------------
   else if (used.item.isEqual(Filemnger)) {

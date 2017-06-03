@@ -13,7 +13,7 @@
 #define		UCoord	      9
 #define		UTime		     10
 #define		UStatus  	   11
-#define		USpdAlti	   12
+#define		UAltitude	   12
 #define		UFilemnger	 13
 
 
