@@ -8,7 +8,7 @@ String makeGPSSentence( ){
 
   //---------------DATE---------------------
 
-/*  Serial.print(F("date value :"));
+  /*  Serial.print(F("date value :"));
   Serial.println(gps.date.value());
   Serial.print(F("time value :"));
   Serial.println(gps.time.value());
@@ -91,7 +91,7 @@ String makeGPSSentence( ){
   GPSMesssage+=gps.location.age();
   GPSMesssage+=",";
 
-  GPSMesssage+=String(gps.altitude.kilometers(), 2);
+  GPSMesssage+=String(gps.altitude.meters(), 2);
   GPSMesssage+=",";
   GPSMesssage+=gps.altitude.age();
   GPSMesssage+=",";
@@ -106,8 +106,8 @@ String makeGPSSentence( ){
   GPSMesssage+=gps.failedChecksum();
   GPSMesssage+=",";
   GPSMesssage+=gps.passedChecksum();
-
-  Serial.println(GPSMesssage);
-  Serial.println(F("------------------------"));
+  
+/*Serial.println(GPSMesssage);
+  Serial.println(F("------------------------"));*/
   return GPSMesssage;
 }

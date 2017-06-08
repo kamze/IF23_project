@@ -6,11 +6,6 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 
-// change this to match your SD shield or module;
-// Arduino Ethernet shield: pin 4
-// Adafruit SD shields and modules: pin 10
-// Sparkfun SD shield: pin 8
-// MKRZero SD: SDCARD_SS_PIN
 const int chipSelect = 10;
 
 void setup() {

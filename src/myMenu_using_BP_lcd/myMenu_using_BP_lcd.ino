@@ -1,105 +1,76 @@
-/**
- * This is the structure of the modelled menu
- *
- * Batterie ok ? if used return 1 " L1: Batterie; L2 e %"
- * Iteneraire
- *   Start  ok? L1: newfile; L2: deltaT=15sec"
- *   Stop  ok?  stop the GPS
- *   Options file
- *      NewFile: ok?
- *      OverWr: ok?
- *   Option points
- *      1sec: ok?
- *      30sec ok?
- *      1min ok?
- * GPSData
- *   Coord ok? "L1: latitude;L2 longitude"
- *   Time ok? "L1:date  ; L2:time"
- *   Status ok? "L1: sat nomber;L2 Hdop"
- *   SpdAlti ok? "L1:speed  ; L2:Altitude"
- * Filemnger ok? "L1: Taille available ; L2: nombre fichier"
- *      lister chose effaser...
- *
- *CE QUI MANQUE: retour depuis n'importe quelle item vers son pere
- *              prevoir define etat used
- *               ajouter des option pour les delai & et fichiers
- *
- */
 #include <MenuBackend.h>
 #include <LiquidCrystal.h>
 #include <Bounce2.h>
 #include <TinyGPSPlus.h>
 #include <SoftwareSerial.h>
+#include <SPI.h>
+#include <SD.h>
+
+// instance variables
+//File myFile;
+/*void readFunction(String fileName) ;
+void overWriteLine2File( String fileName, String line);
+void WriteLine2File( String fileName, String line);*/
+//------------ GPS vars----------------
+TinyGPSPlus gps;// The TinyGPS++ object
+SoftwareSerial ss(3, 2);//The serial connection to the GPS deviceRXPin=3;TXPin=2
+//-----local-------
 #include "InputManager.h"
 #include "defineUsedAction.h"
 #include "menuFunction.h"
 #include "GPSFunction.h"
 
-
-//------------ GPS vars----------------
-
-TinyGPSPlus gps;// The TinyGPS++ object
-
-SoftwareSerial ss(3, 2);//The serial connection to the GPS deviceRXPin=3;TXPin=2
-String GPSSentence;
-
+void dealWithUsedEvents(byte menuUsed );
 //----------- parametters vars------------
 byte read;
-unsigned int GPSSearchPeriod=2000;//2000 milisecondes
+long unsigned int GPSSearchPeriod=2000;//2000 milisecondes
+long unsigned int oldMillisVallue;//2000 milisecondes
+
 bool isStarted=false; // to start the gps if it is true
-bool isNewFile=true;
 void setup()
 {
   Serial.begin(9600);
   ss.begin(4800);
-
   lcd.begin(8, 2);
   menuSetup();
-  Serial.println("Starting navigation:\r\nOK: s   Down: s   Left: q   Right: d   z: esp");
 }
 
 
 void loop()
 {
-
   read=BP_mnger.pressedButton();
   navigateMenus(read);
-  while (ss.available() > 0)
+  dealWithUsedEvents(menuUsedCode);
+  menuUsedCode=0;
+
+    while (ss.available() > 0){
     if (gps.encode(ss.read()))
       if (gps.location.isUpdated() || gps.date.isUpdated() || gps.time.isUpdated() || gps.altitude.isUpdated()
-        || gps.satellites.isUpdated() || gps.hdop.isUpdated()   )
-      {
+        || gps.satellites.isUpdated() || gps.hdop.isUpdated()){
+          if (isStarted && (GPSSearchPeriod<=millis()-oldMillisVallue)) {
+          makeGPSSentence( );
+          oldMillisVallue=millis();// if i comment this line it works
 
-        //GPSSentence=makeGPSSentence( gps);
+        }
+         }
+}
 
-        if(getmenuUsed()!=0){
-          Serial.print("menuUsedCode: ");
-          Serial.println(getmenuUsed());
+
+}
+void dealWithUsedEvents(byte menuUsed ){
+      if(menuUsed!=0){
           // deal with what has been used
 
-            switch (getmenuUsed()) {
+        switch (menuUsed) {
           case UBattery:
             DisplayTextfloat("Bat:",BP_mnger.gettension(),1,0);
             break;
 
-          case UStart:
+          case UonOff:
             DisplayText("Started","Filename");
-            isStarted=true;
-            break;
-
-          case UStop:
-            DisplayText("Stop","Filename");
-            isStarted=true;
-            break;
-
-          case UNewFile:
-            DisplayText("UNewFile","Filename");
-            isNewFile=true;
-            break;
-
-          case UOverWr:
-            DisplayText("UOverWr","Filename");
-            isNewFile=false;
+            isStarted=!isStarted;
+            Serial.print("isStarted: ");
+            Serial.println(isStarted);
             break;
 
           case UCourt:
@@ -112,10 +83,17 @@ void loop()
             GPSSearchPeriod=15000;
             break;
 
-          case ULong:
-            DisplayText("ULong","Filename");
-            GPSSearchPeriod=60000;
+          case UTour3:
+            DisplayText("UTour3","Filename");
             break;
+
+          case UCompagne:
+            DisplayText("UCompagne","Filename");
+            break;
+
+          case UBatiment:
+            DisplayText("UBatiment","Filename");
+           break;
 
           case UCoord:
             DisplayValues(gps.location.lat(),gps.location.lng(),7 );
@@ -123,7 +101,7 @@ void loop()
 
           case UTime:
 
-          DisplayTextint("D","T",gps.date.value(),gps.time.value());
+          DisplayTextint("D:","T:",gps.date.value(),gps.time.value());
 
             break;
 
@@ -131,17 +109,75 @@ void loop()
           DisplayTextint("Sat:","HDOP",gps.satellites.value(),gps.hdop.value());
             break;
 
-          case UAltitude:
+        /*  case UAltitude:
           DisplayTextfloat("A:",gps.altitude.meters(),6,0);
             break;
 
-          case UFilemnger:
-            DisplayText("UFilemnger","Filename");
+          case USDInfo:
+            DisplayText("SDInfo","Filename");
             break;
+
+          case USendTour3:
+            DisplayText("SndFile1","Filename");
+            break;
+          case USendCompagne:
+            DisplayText("SndFile2","Filename");
+            break;
+          case USendBatiment:
+            DisplayText("USendBatiment","Filename");
+            break;*/
+
           }
 
-          setmenuUsed(0);
+
 
         }
-      }
+
 }
+
+/*
+void WriteLine2File( String fileName, String line) {
+ File myFile = SD.open("Compagne.txt", FILE_WRITE);
+
+  if (myFile) {
+     myFile.println(line);
+       myFile.close();
+
+
+   } else {
+     Serial.println("error opening test.txt");
+   }
+ }
+
+void overWriteLine2File( String fileName, String line) {
+  File myFile = SD.open("Compagne.txt", O_WRITE | O_CREAT | O_TRUNC);
+
+  if (myFile) {
+     myFile.println(line);
+       myFile.close();
+
+
+   } else {
+     Serial.println("error opening test.txt");
+   }
+ }
+void readFunction(String fileName) {
+  //  myFile = SD.open("IF232017/tour3.txt
+ File myFile = SD.open(fileName);
+
+    if (myFile) {
+      Serial.print(fileName);
+      Serial.println(": ");
+
+      // read from the file until there's nothing else in it:
+      while (myFile.available()) {
+        Serial.write(myFile.read());
+      }
+      // close the file:
+      myFile.close();
+    } else {
+      // if the file didn't open, print an error:
+      Serial.println("error opening test.txt");
+    }
+}
+*/

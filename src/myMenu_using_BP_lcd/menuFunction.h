@@ -1,3 +1,24 @@
+
+/**
+ * This is the structure of the modelled menu
+ *
+ * Batterie ok ? if used return 1 " L1: Batterie; L2 e %"
+ * Iteneraire
+ *      Court: ok?
+ *      Moyen ok?
+ *      Tour3 ok ? we write gps data in it
+ *      Compagne ok ? we write gps data in it
+ *      Batiment ok ? we write gps data in it
+ * GPSData
+ *      Coord ok? "L1: latitude;L2 longitude"
+ *      Time ok? "L1:date  ; L2:time"
+ *      Status ok? "L1: sat nomber;L2 Hdop"
+ *      SendFile
+ *          Tour3 ok ? serial print Tour3
+ *          Compagne ok ? serial print Compagne
+ *          Batiment ok ? serial print Batiment
+ */
+
 #include <Arduino.h>
 #include <MenuBackend.h>
 #include <LiquidCrystal.h>
@@ -13,165 +34,42 @@ void navigateMenus( byte read);
 MenuBackend menu = MenuBackend(menuUseEvent,menuChangeEvent);
 //beneath is the list of menu items needed to build the menu
 MenuItem Battery     = MenuItem(menu, "Battery ", 1);//----usable
-MenuItem Iteneraire  = MenuItem(menu, "Itener  ", 1);
-MenuItem Start       = MenuItem(menu, "Start   ", 2);//----usable
-MenuItem Stop        = MenuItem(menu, "Stop    ", 2);//----usable
-MenuItem FileOpn     = MenuItem(menu, "FileOpn ", 2);
-MenuItem NewFile     = MenuItem(menu, "NewFile ", 3);//----usable
-MenuItem OverWr      = MenuItem(menu, "OverWr  ", 3);//----usable
-MenuItem PtOpn       = MenuItem(menu, "PtOpn   ", 2);
-MenuItem Seconde_1   = MenuItem(menu, "Court   ", 3);//----usable
-MenuItem Secondes_15 = MenuItem(menu, "Moyen   ", 3);//----usable
-MenuItem Minute_1    = MenuItem(menu, "Long    ", 3);//----usable
-MenuItem GPSData     = MenuItem(menu, "GPSData ", 1);
-MenuItem Coord       = MenuItem(menu, "Coord   ", 2);//----usable
-MenuItem Time        = MenuItem(menu, "Time    ", 2);//----usable
-MenuItem Status      = MenuItem(menu, "Status  ", 2);//----usable
-MenuItem altitude     = MenuItem(menu, "altitude ", 2);//----usable
-MenuItem Filemnger   = MenuItem(menu, "Filemngr", 1);//----usable
+MenuItem OnOff       = MenuItem(menu, "OnOff   ", 1);//----usable
+MenuItem Court       = MenuItem(menu, "Court   ", 1);//----usable
+MenuItem Moyen       = MenuItem(menu, "Moyen   ", 1);//----usable
+MenuItem Tour3       = MenuItem(menu, "Tour3   ", 1);//----usable
+MenuItem Compagne    = MenuItem(menu, "Compagne", 1);//----usable
+MenuItem Batiment    = MenuItem(menu, "Batiment", 1);//----usable
+MenuItem Coord       = MenuItem(menu, "Coord   ", 1);//----usable
+MenuItem Time        = MenuItem(menu, "Time    ", 1);//----usable
+MenuItem Status      = MenuItem(menu, "Status  ", 1);//----usable
+
 
 LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
 InputManager BP_mnger(15,16,17,A0);
 
 byte menuUsedCode=0;
 // Display somthing on line 1 and 2 of the lcd screen
-void DisplayText(String line1,String line2){
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(line1);
-  lcd.setCursor(0, 1);
-  lcd.print(line2);
-}
-// Display somthing on line 1 and 2 of the lcd screen
-void DisplayValues(float value1,float value2, byte precision=3){
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(value1,precision);
-  lcd.setCursor(0, 1);
-  lcd.print(value2,precision);
-}
-// displaying something with line & text on a specific lcd line
-void DisplayTextfloat(String text,float value, byte precision=3, byte line=0){
-  text+=String(value,precision);
-  lcd.clear();
-  lcd.setCursor(0, line);
-  lcd.print(text);
-}
 
-void DisplayTextint(String text1,String text2,int value1,long int value2){
-
-  text1+=String(value1);
-  text2+=String(value2);
-
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(text1);
-  lcd.setCursor(0, 1);
-  lcd.print(text2);
-}
-byte getmenuUsed() {
-  return menuUsedCode;
-}
-void setmenuUsed(byte n) {
-  menuUsedCode=n;
-}
 void menuSetup()
 {
-  Serial.println("Setting up menu...");
-  //add the file menu to the menu root
   menu.getRoot().add(Battery);
-  Battery.addRight(Iteneraire).addRight(GPSData ).addRight(Filemnger);
-  Iteneraire.add(Start).addRight(Stop).addRight(FileOpn).addRight(PtOpn);
-  GPSData.add(Coord).addRight(Time).addRight(Status).addRight(altitude);
-  FileOpn.add(NewFile).addRight(OverWr);
-  PtOpn.add(Seconde_1).addRight(Secondes_15).addRight(Minute_1);
+  Battery.addRight(OnOff).addRight(Court).addRight(Moyen);
+  Moyen.addRight(Tour3).addRight(Compagne).addRight(Batiment);
+  Batiment.addRight(Coord).addRight(Time).addRight(Status);
 }
 
-
-//  This is where you define a behaviour for a menu item
-
-void DisplayUsedEvent(byte usedEventNumber ){
-
-
-}
-
-
-
-void menuUseEvent(MenuUseEvent used)
-{
-  if(used.item.isEqual(Battery)){
-    //Serial.println(used.item.getName());
-    menuUsedCode=UBattery;
-  }
-  // ------Iteneraire------------
-  else if (used.item.isEqual(Start)) {
-  //  Serial.println(used.item.getName());
-    menuUsedCode=UStart ;
-  }
-  else if (used.item.isEqual(Stop)) {
-  //  Serial.println(used.item.getName());
-    menuUsedCode=UStop ;
-  }
-  else if(used.item.isEqual(NewFile)){
-    //Serial.println(used.item.getName());
-    menuUsedCode=UNewFile;
-  }
-  else if (used.item.isEqual(OverWr)) {
-    //Serial.println(used.item.getName());
-    menuUsedCode=UOverWr;
-  }
-  else if (used.item.isEqual(Seconde_1)) {
-  //  Serial.println(used.item.getName());
-    menuUsedCode=UCourt;
-  }
-  else if(used.item.isEqual(Secondes_15)){
-    //Serial.println(used.item.getName());
-    menuUsedCode=UMoyen;
-  }
-  else if (used.item.isEqual(Minute_1)) {
-    Serial.println(used.item.getName());
-    menuUsedCode=ULong;
-  }
-  // ------GPSdata------------
-  else if(used.item.isEqual(Coord)){
-    //Serial.println(used.item.getName());
-    menuUsedCode=UCoord;
-  }
-  else if (used.item.isEqual(Time)) {
-    //Serial.println(used.item.getName());
-    menuUsedCode=UTime;
-  }
-  else if (used.item.isEqual(Status)) {
-    //Serial.println(used.item.getName());
-    menuUsedCode=UStatus;
-  }
-  else if (used.item.isEqual(altitude)) {
-    //Serial.println(used.item.getName());
-    menuUsedCode=UAltitude;
-  }
-  // ------File manger------------
-  else if (used.item.isEqual(Filemnger)) {
-    //Serial.println(used.item.getName());
-    menuUsedCode=UFilemnger;
-  }
-
-}
 
 /*Here we get a notification whenever the user changes the menu
  That is, when the menu is navigated*/
-void menuChangeEvent(MenuChangeEvent changed)
-{
-  //Serial.print("Menu change ");
-  //Serial.print(changed.from.getName());
-  //Serial.print(" ");
-  //Serial.println(changed.to.getName());
-  //------by lcd----------------
+
+void menuChangeEvent(MenuChangeEvent changed){
+ // to save memory we use the 4 files in 2 different submenu
   lcd.setCursor(0, 0);
   lcd.print(changed.from.getName());
   lcd.setCursor(0, 1);
   lcd.print(changed.to.getName());
 }
-
 
 void navigateMenus( byte read) {
   MenuItem currentMenu=menu.getCurrent();
@@ -202,4 +100,83 @@ void navigateMenus( byte read) {
 
     break;
   }
+}
+
+
+// when a usable icone is pressed thats where we set values to deal with it later
+void menuUseEvent(MenuUseEvent used){
+  if(used.item.isEqual(Battery)){
+    menuUsedCode=UBattery;
+  }
+  // ------Iteneraire------------
+  else if (used.item.isEqual(OnOff)) {
+    menuUsedCode=UonOff ;
+  }
+
+  else if (used.item.isEqual(Court)) {
+    menuUsedCode=UCourt;
+  }
+  else if(used.item.isEqual(Moyen)){
+    menuUsedCode=UMoyen;
+  }
+
+  else if(used.item.isEqual(Tour3) && used.item.getBefore()==NULL) {
+    menuUsedCode=UTour3;
+  }
+  else if (used.item.isEqual(Compagne) && used.item.getBefore()==NULL) {
+    menuUsedCode=UCompagne;
+  }
+  else if (used.item.isEqual(Batiment) && used.item.getBefore()==NULL) {
+    menuUsedCode=UBatiment;
+  }
+
+  // ------GPSdata------------
+  else if(used.item.isEqual(Coord)){
+    menuUsedCode=UCoord;
+  }
+  else if (used.item.isEqual(Time)) {
+    menuUsedCode=UTime;
+  }
+  else if (used.item.isEqual(Status)) {
+    menuUsedCode=UStatus;
+  }
+
+}
+
+void DisplayText(String line1,String line2){
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(line1);
+  lcd.setCursor(0, 1);
+  lcd.print(line2);
+}
+// Display somthing on line 1 and 2 of the lcd screen
+void DisplayValues(float value1,float value2, byte precision=3){
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(value1,precision);
+  lcd.setCursor(0, 1);
+  lcd.print(value2,precision);
+}
+// displaying something with line & text on a specific lcd line
+void DisplayTextfloat(String text,float value, byte precision=3, byte line=0){
+  text+=String(value,precision);
+  lcd.clear();
+  lcd.setCursor(0, line);
+  lcd.print(text);
+}
+
+void DisplayTextint(String text1,String text2,unsigned int value1,long int value2){
+
+  text1+=String(value1);
+  text2+=String(value2);
+
+  Serial.println(text1);
+  Serial.println(text2);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(text1);
+  lcd.setCursor(0, 1);
+  lcd.print(text2);
 }

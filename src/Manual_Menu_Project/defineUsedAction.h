@@ -12,6 +12,10 @@
 #define		UCoord	       8
 #define		UTime		       9
 #define		UStatus  	     10
-
+#define		UAltitude		   11
+#define		USendTour3     12
+#define		USendCompagne  13
+#define		USendBatiment  14
+#define		USDInfo  	     15
 
 #endif
