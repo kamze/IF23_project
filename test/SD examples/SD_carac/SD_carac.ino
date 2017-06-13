@@ -29,6 +29,11 @@ void setup() {
   } else {
     Serial.println("Wiring is correct and a card is present.");
   }
+  int yer=2003; 
+  int months=3;
+  int days=21;
+
+sprintf("TEST_SD.TXT", "%02d%02d%02d.csv", yer, months, days);
 
   // print the type of card
   Serial.print("\nCard type: ");

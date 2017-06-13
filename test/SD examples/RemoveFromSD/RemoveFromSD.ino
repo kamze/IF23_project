@@ -39,13 +39,17 @@ void setup() {
   Serial.println("initialization done.");
 
 
-  if (SD.exists("IF232017/BATIME")) {
+  if (SD.exists("201438.GP")) {
     Serial.println("CAMPAGNE.TXT exists.");
      Serial.println("Removing CAMPAGNE.TXT...");
-      SD.remove("IF232017/BATIME");
+      SD.remove("201438.GP");
+      SD.remove("171334.GP");
+      SD.remove("13410.GP");
+      SD.remove("132411.GP");
+      SD.remove("TEST.TXT");
 
-     /* SD.rmdir("CAMPAGNE.TXT");
-     //SD.mkdir("IF232017");*/
+      SD.rmdir("ANDROID");
+     SD.mkdir("SYSTEM~1");
      
   } else {
     Serial.println("CAMPAGNE.TXT doesn't exist.");

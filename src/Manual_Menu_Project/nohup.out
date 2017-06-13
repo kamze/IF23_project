@@ -1,0 +1,12 @@
+WARNING: gnome-web-photo is missing --> screenshots of websites will be disabled!
+
+WARNING: Goo::Canvas/libgoo-canvas-perl is missing --> drawing tool will be disabled!
+
+WARNING: Image::ExifTool is missing --> writing Exif information will be disabled!
+
+WARNING: Gtk2::AppIndicator is missing --> there will be no icon showing up in the status bar when running Unity!
+
+GLib-CRITICAL **: Source ID 208 was not found when attempting to remove it at /usr/bin/shutter line 7249.
+GLib-GObject-CRITICAL **: g_object_unref: assertion 'G_IS_OBJECT (object)' failed at /usr/bin/shutter line 5535.
+GLib-GObject-CRITICAL **: g_object_unref: assertion 'G_IS_OBJECT (object)' failed at /usr/bin/shutter line 5535.
+GLib-CRITICAL **: Source ID 895 was not found when attempting to remove it at /usr/bin/shutter line 7249.

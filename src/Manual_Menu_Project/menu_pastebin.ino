@@ -1,4 +1,3 @@
-#include <LiquidCrystal.h>
 #include <Bounce2.h>
 #include <LiquidCrystal.h> // on importe la bibliothèque pour LCD
 #include <TinyGPSPlus.h>
@@ -18,7 +17,7 @@ LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
 char btn_push;
 byte mainMenuPage = 1;
 byte mainMenuPageOld = 1;
-byte mainMenuTotal = 14;
+byte mainMenuTotal = 13;
 
 
 //----------------GPS Vars --------------
@@ -48,9 +47,11 @@ void setup()
 }
 void loop()
 {
-
+//  read the button signification
     btn_push = ReadKeypad();
+    // deal with menu
     MainMenuBtn();
+    // action is set
     dealWithUsedEvents();
 
     while (ss.available() > 0){
@@ -59,7 +60,6 @@ void loop()
       if (gps.location.isUpdated() || gps.date.isUpdated() || gps.time.isUpdated() || gps.altitude.isUpdated()
         || gps.satellites.isUpdated() || gps.hdop.isUpdated()){
           if (isStarted && (GPSSearchPeriod<=millis()-oldMillisVallue)) {
-
             if (fileIsChanged) {
                 overWriteLine2File(FileName,makeGPSSentence( ));
                 fileIsChanged=false;

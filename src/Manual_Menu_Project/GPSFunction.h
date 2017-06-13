@@ -1,8 +1,8 @@
-
+// Function to get a string with GPS sentence customed below
 String makeGPSSentence( ){
   // to acquire the message
   // making the customed sentence:
-  // GPSMesssage=YearMonthDay,DateAge,HourMinutesSecondes,TimeAge,Satellites,AgeSat,Longitude,Latitude,AgeLocation,Altitude,AgeAltitude,HDOP,AgeHDOP,SentencesWithFix,FailedChecksum,PassedChecksum\n
+  // GPSMesssage=Year,Month,Day,DateAge,Hour,Minutes,Secondes,TimeAge,Satellites,AgeSat,Longitude,Latitude,AgeLocation,Altitude,AgeAltitude,HDOP,AgeHDOP,SentencesWithFix,FailedChecksum,PassedChecksum\n
 
   String GPSMesssage="";
 
@@ -106,7 +106,7 @@ String makeGPSSentence( ){
   GPSMesssage+=gps.failedChecksum();
   GPSMesssage+=",";
   GPSMesssage+=gps.passedChecksum();
-  
+
 /*Serial.println(GPSMesssage);
   Serial.println(F("------------------------"));*/
   return GPSMesssage;

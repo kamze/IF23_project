@@ -21,8 +21,8 @@ void setup() {
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
-    Serial.println("Creating example.txt...");
-  myFile = SD.open("IF232017/Batiment.txt", FILE_WRITE);
+ /*   Serial.println("Creating example.txt...");
+  myFile = SD.open("IF232017/B", FILE_WRITE);
 
   // if the file opened okay, write to it:
   if (myFile) {
@@ -35,9 +35,9 @@ void setup() {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
-  myFile.close();
+  myFile.close();*/
 
-readFunction("IF232017/Batiment.txt");
+readFunction("IF232017/%");
  /* // re-open the file for reading:
   myFile = SD.open("IF232017/tour3.txt");
   if (myFile) {

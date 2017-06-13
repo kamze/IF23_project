@@ -8,10 +8,10 @@ void dateTime(uint16_t* date, uint16_t* time) {
 
 
   // return date using FAT_DATE macro to format fields
-  *date = FAT_DATE(2017, 6, 4);
+  *date = FAT_DATE(1994, 9, 21);
 
   // return time using FAT_TIME macro to format fields
-  *time = FAT_TIME(10, 36, 15);
+  *time = FAT_TIME(10, 36, 10);
 }
 //------------------------------------------------------------------------------
 void setup() {

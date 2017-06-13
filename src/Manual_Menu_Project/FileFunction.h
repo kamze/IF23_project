@@ -1,4 +1,4 @@
-
+// write a line to a file called when passing its name(filename) and the line to write (line)
 void WriteLine2File( String fileName, String line) {
  File myFile = SD.open(fileName, FILE_WRITE);
 
@@ -12,6 +12,7 @@ void WriteLine2File( String fileName, String line) {
    }
  }
 
+// same as before but here we overwrite
 void overWriteLine2File( String fileName, String line) {
   File myFile = SD.open(fileName, O_WRITE | O_CREAT | O_TRUNC);
 
@@ -25,6 +26,7 @@ void overWriteLine2File( String fileName, String line) {
    }
  }
 
+// read a file
 void readFunction(String fileName) {
  File myFile = SD.open(fileName);
 
@@ -35,6 +37,8 @@ void readFunction(String fileName) {
       while (myFile.available()) {
         Serial.write(myFile.read());
       }
+      Serial.println(F("END"));
+
       // close the file:
       myFile.close();
     } else {

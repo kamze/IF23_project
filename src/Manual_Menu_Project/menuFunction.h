@@ -16,6 +16,7 @@
  *      Batiment ok ? serial print Batiment
  */
 
+// Display text in the first line and the seconde line
  void DisplayText(String line1,String line2){
    lcd.clear();
    lcd.setCursor(0, 0);
@@ -38,7 +39,7 @@
    lcd.setCursor(0, line);
    lcd.print(text);
  }
-
+// Display text in first line of the lcd and an integer in the seconde line
  void DisplayTextint(String text1,String text2,unsigned long int value1,unsigned long int value2){
 
    text1+=String(value1);
@@ -51,6 +52,7 @@
    lcd.print(text2);
  }
 
+// Display menu
  void MainMenuDisplay()
  {
      lcd.clear();
@@ -97,9 +99,9 @@
            DisplayText("Afficher","Status");
            break;
 
-         case UAltitude:
+         /*case UAltitude:
            DisplayText("Afficher","Altitude");
-           break;
+           break;*/
 
          case USendTour3:
            DisplayText("Send:","Tour3");
@@ -116,6 +118,7 @@
 
  }
 
+ // set some values to be able to display correctly the menu
  void MainMenuBtn()
  {
    // right
@@ -140,6 +143,7 @@
      }
  }
 
+// encode which button is pushed
  char ReadKeypad()
  {
    byte keypad_value = BP_mnger.pressedButton();
@@ -156,6 +160,7 @@
 
  }
 
+// whena menu is chosen it's here where we deal with it
  void dealWithUsedEvents()
  {
    if(btn_push == 'S')//enter selected menu
@@ -212,9 +217,9 @@
        DisplayTextint("Sat:","HDOP",gps.satellites.value(),gps.hdop.value());
          break;
 
-       case UAltitude:
+    /*   case UAltitude:
          DisplayTextfloat("A:",gps.altitude.meters(),6,0);
-         break;
+         break;*/
 
        case USendTour3:
          readFunction("IF232017/tour3.txt");
